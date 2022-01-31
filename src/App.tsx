@@ -3,13 +3,14 @@ import logo from "./logo.svg";
 import TextField from "@mui/material/TextField";
 import "./App.css";
 import Typography from "@mui/material/Typography";
-import _ from "lodash";
+import _, { filter } from "lodash";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 function App() {
   // const list: String[] = [];
-  const [todo, setTodo] = useState("");
+  const [todo, setTodo] = useState<String>("");
   const [showRemove, setShowRemove] = useState(false);
+
   const [list, setList] = useState<String[]>([]);
   const checkDuplicate = (value: String) => {
     for (var i = 0; i < list.length; ++i) {
@@ -19,8 +20,32 @@ function App() {
     }
     return false;
   };
-  const removeOnClick = (index: number) => {
-    setList(list.splice(index));
+  const removeOnClick = (inputIndex: number) => {
+    var filtered = list.filter(function (value, index, arr) {
+      return index !== inputIndex;
+    });
+    setList(filtered);
+  };
+  const editOnClick = (value: String, inputIndex: number) => {
+    setTodo(value);
+    removeOnClick(inputIndex);
+  };
+  const onTodoSubmit = () => {
+    if (todo === "") {
+      alert("The input is empty.");
+    } else if (checkDuplicate(todo)) {
+      alert(todo + " is already in the list.");
+    } else {
+      setList([...list, todo]);
+      setTodo("");
+    }
+  };
+  const filterTodo = () => {
+    var matches = _.filter(list, function (item, index) {
+      return item.indexOf(todo.toString()) !== -1;
+    });
+
+    return matches;
   };
   return (
     <div>
@@ -38,16 +63,7 @@ function App() {
           if (event.key === "Enter") {
             // Do code here
             // list.push(todo);
-
-            if (todo === "") {
-              alert("The input is empty.");
-            } else if (checkDuplicate(todo)) {
-              alert(todo + " is already in the list.");
-            } else {
-              setList([...list, todo]);
-              setTodo("");
-            }
-
+            onTodoSubmit();
             // console.log("todo", todo, "list", list);
             event.preventDefault();
           }
@@ -55,38 +71,98 @@ function App() {
       />
 
       <Typography style={{ marginTop: 20 }}>List:</Typography>
-      {_.map(list, (item: String, index: number) => {
-        return (
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center"
-            }}
-            onMouseEnter={() => {
-              console.log("moouse enter");
-              setShowRemove(true);
-            }}
-            onMouseLeave={() => {
-              setShowRemove(false);
-            }}
-          >
-            <Typography style={{ marginTop: 15 }}>{item}</Typography>
-            {showRemove && (
-              <Button
-                onClick={() => {
-                  removeOnClick(index);
+      {todo === ""
+        ? _.map(list, (item: String, index: number) => {
+            return (
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center"
                 }}
-                variant="contained"
-                size="small"
-                style={{ marginLeft: 20 }}
+                onMouseEnter={() => {
+                  console.log("moouse enter");
+                  setShowRemove(true);
+                }}
+                onMouseLeave={() => {
+                  setShowRemove(false);
+                }}
               >
-                Remove
-              </Button>
-            )}
-          </Box>
-        );
-      })}
+                <Typography style={{ marginTop: 15 }}>{item}</Typography>
+                {showRemove && (
+                  <div>
+                    <Button
+                      onClick={() => {
+                        removeOnClick(index);
+                      }}
+                      variant="contained"
+                      size="small"
+                      style={{ marginLeft: 20 }}
+                    >
+                      Remove
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        editOnClick(item, index);
+                      }}
+                      variant="contained"
+                      size="small"
+                      style={{ marginLeft: 20 }}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                )}
+              </Box>
+            );
+          })
+        : _.map(filterTodo(), (item: String, index: number) => {
+            return (
+              <Box
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center"
+                }}
+                onMouseEnter={() => {
+                  console.log("moouse enter");
+                  setShowRemove(true);
+                }}
+                onMouseLeave={() => {
+                  setShowRemove(false);
+                }}
+              >
+                <Typography style={{ marginTop: 15 }}>{item}</Typography>
+                {showRemove && (
+                  <div>
+                    <Button
+                      onClick={() => {
+                        removeOnClick(index);
+                      }}
+                      variant="contained"
+                      size="small"
+                      style={{ marginLeft: 20 }}
+                    >
+                      Remove
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        editOnClick(item, index);
+                      }}
+                      variant="contained"
+                      size="small"
+                      style={{ marginLeft: 20 }}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                )}
+              </Box>
+            );
+          })}
+      {filterTodo().length === 0 && todo !== "" && (
+        <Typography>No result. Create a new one instead!</Typography>
+      )}
     </div>
   );
 }

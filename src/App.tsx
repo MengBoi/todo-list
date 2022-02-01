@@ -63,7 +63,7 @@ function App() {
     }
   };
   const filterTodo = () => {
-    var matches = _.filter(list, function (item, index) {
+    var matches = _.filter(list, function (item, index: Number) {
       return item.indexOf(todo.toString()) !== -1;
     });
 

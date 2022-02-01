@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import TextField from "@mui/material/TextField";
 import "./App.css";
@@ -6,8 +6,14 @@ import Typography from "@mui/material/Typography";
 import _, { filter } from "lodash";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import database from "./utils/firebase";
+
+import { ref, set, onValue } from "firebase/database";
 function App() {
   // const list: String[] = [];
+  useEffect(() => {
+    pullFromFire();
+  }, []);
   const [todo, setTodo] = useState<String>("");
   const [showRemove, setShowRemove] = useState(false);
 
@@ -20,11 +26,26 @@ function App() {
     }
     return false;
   };
+  const pushToFire = async (value: String[]) => {
+    set(ref(database, "todo"), value);
+  };
+  const pullFromFire = async () => {
+    const todoListRef = ref(database, "todo");
+    onValue(todoListRef, (snapshot) => {
+      const data = snapshot.val();
+      // updateStarCount(postElement, data);
+
+      setList(data || []);
+    });
+  };
+
   const removeOnClick = (inputIndex: number) => {
     var filtered = list.filter(function (value, index, arr) {
       return index !== inputIndex;
     });
-    setList(filtered);
+
+    pushToFire(filtered);
+    pullFromFire();
   };
   const editOnClick = (value: String, inputIndex: number) => {
     setTodo(value);
@@ -36,8 +57,9 @@ function App() {
     } else if (checkDuplicate(todo)) {
       alert(todo + " is already in the list.");
     } else {
-      setList([...list, todo]);
       setTodo("");
+      pushToFire([...list, todo]);
+      pullFromFire();
     }
   };
   const filterTodo = () => {
@@ -64,7 +86,7 @@ function App() {
             // Do code here
             // list.push(todo);
             onTodoSubmit();
-            // console.log("todo", todo, "list", list);
+
             event.preventDefault();
           }
         }}
@@ -75,13 +97,13 @@ function App() {
         ? _.map(list, (item: String, index: number) => {
             return (
               <Box
+                key={index}
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center"
                 }}
                 onMouseEnter={() => {
-                  console.log("moouse enter");
                   setShowRemove(true);
                 }}
                 onMouseLeave={() => {
@@ -119,13 +141,13 @@ function App() {
         : _.map(filterTodo(), (item: String, index: number) => {
             return (
               <Box
+                key={index}
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center"
                 }}
                 onMouseEnter={() => {
-                  console.log("moouse enter");
                   setShowRemove(true);
                 }}
                 onMouseLeave={() => {

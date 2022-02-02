@@ -14,8 +14,9 @@ function App() {
   useEffect(() => {
     pullFromFire();
   }, []);
+
   const [todo, setTodo] = useState<String>("");
-  const [showRemove, setShowRemove] = useState(false);
+  const [showRemove, setShowRemove] = useState<Number>();
 
   const [list, setList] = useState<String[]>([]);
   const checkDuplicate = (value: String) => {
@@ -69,123 +70,153 @@ function App() {
 
     return matches;
   };
+
   return (
-    <div>
-      <Typography>To do:</Typography>
-      <TextField
-        value={todo}
-        style={{ marginTop: 20 }}
-        id="outlined-basic"
-        label="Outlined"
-        variant="outlined"
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          setTodo(event.target.value);
-        }}
-        onKeyPress={(event) => {
-          if (event.key === "Enter") {
-            // Do code here
-            // list.push(todo);
-            onTodoSubmit();
+    <Box style={{ padding: 50, display: "flex" }}>
+      <div style={{ width: "50%" }}>
+        <Typography style={{ fontSize: 30 }}>To do:</Typography>
+        <TextField
+          value={todo}
+          style={{ marginTop: 20 }}
+          id="outlined-basic"
+          placeholder="to do"
+          variant="outlined"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setTodo(event.target.value);
+          }}
+          onKeyPress={(event) => {
+            if (event.key === "Enter") {
+              // Do code here
+              // list.push(todo);
+              onTodoSubmit();
 
-            event.preventDefault();
-          }
-        }}
-      />
+              event.preventDefault();
+            }
+          }}
+        />
 
-      <Typography style={{ marginTop: 20 }}>List:</Typography>
-      {todo === ""
-        ? _.map(list, (item: String, index: number) => {
-            return (
-              <Box
-                key={index}
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center"
-                }}
-                onMouseEnter={() => {
-                  setShowRemove(true);
-                }}
-                onMouseLeave={() => {
-                  setShowRemove(false);
-                }}
-              >
-                <Typography style={{ marginTop: 15 }}>{item}</Typography>
-                {showRemove && (
-                  <div>
-                    <Button
-                      onClick={() => {
-                        removeOnClick(index);
-                      }}
-                      variant="contained"
-                      size="small"
-                      style={{ marginLeft: 20 }}
-                    >
-                      Remove
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        editOnClick(item, index);
-                      }}
-                      variant="contained"
-                      size="small"
-                      style={{ marginLeft: 20 }}
-                    >
-                      Edit
-                    </Button>
-                  </div>
-                )}
-              </Box>
-            );
-          })
-        : _.map(filterTodo(), (item: String, index: number) => {
-            return (
-              <Box
-                key={index}
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center"
-                }}
-                onMouseEnter={() => {
-                  setShowRemove(true);
-                }}
-                onMouseLeave={() => {
-                  setShowRemove(false);
-                }}
-              >
-                <Typography style={{ marginTop: 15 }}>{item}</Typography>
-                {showRemove && (
-                  <div>
-                    <Button
-                      onClick={() => {
-                        removeOnClick(index);
-                      }}
-                      variant="contained"
-                      size="small"
-                      style={{ marginLeft: 20 }}
-                    >
-                      Remove
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        editOnClick(item, index);
-                      }}
-                      variant="contained"
-                      size="small"
-                      style={{ marginLeft: 20 }}
-                    >
-                      Edit
-                    </Button>
-                  </div>
-                )}
-              </Box>
-            );
-          })}
-      {filterTodo().length === 0 && todo !== "" && (
-        <Typography>No result. Create a new one instead!</Typography>
-      )}
-    </div>
+        <Typography style={{ marginTop: 20, marginBottom: 20 }}>
+          List:
+        </Typography>
+        {todo === ""
+          ? _.map(list, (item: String, index: number) => {
+              return (
+                <Box
+                  key={index}
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "#e0e0e0",
+                    marginTop: 15,
+                    padding: 15,
+                    borderRadius: 5,
+                    justifyContent: "space-between",
+                    width: "70%"
+                  }}
+                  onMouseEnter={() => {
+                    setShowRemove(index);
+                  }}
+                  onMouseLeave={() => {
+                    setShowRemove(index);
+                  }}
+                >
+                  <Typography>{item}</Typography>
+                  {showRemove === index && (
+                    <div>
+                      <Button
+                        onClick={() => {
+                          removeOnClick(index);
+                        }}
+                        variant="contained"
+                        size="small"
+                        style={{ marginLeft: 20 }}
+                      >
+                        Remove
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          editOnClick(item, index);
+                        }}
+                        variant="contained"
+                        size="small"
+                        style={{ marginLeft: 20 }}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                  )}
+                </Box>
+              );
+            })
+          : _.map(filterTodo(), (item: String, index: number) => {
+              return (
+                <Box
+                  key={index}
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "#e0e0e0",
+                    marginTop: 15,
+                    padding: 15,
+                    borderRadius: 5,
+                    justifyContent: "space-between",
+                    width: "70%"
+                  }}
+                  onMouseEnter={() => {
+                    setShowRemove(index);
+                  }}
+                  onMouseLeave={() => {
+                    setShowRemove(index);
+                  }}
+                >
+                  <Typography>{item}</Typography>
+                  {showRemove === index && (
+                    <div>
+                      <Button
+                        onClick={() => {
+                          removeOnClick(index);
+                        }}
+                        variant="contained"
+                        size="small"
+                        style={{ marginLeft: 20 }}
+                      >
+                        Remove
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          editOnClick(item, index);
+                        }}
+                        variant="contained"
+                        size="small"
+                        style={{ marginLeft: 20 }}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                  )}
+                </Box>
+              );
+            })}
+        {filterTodo().length === 0 && todo !== "" && (
+          <Typography>No result. Create a new one instead!</Typography>
+        )}
+      </div>
+      <div style={{ width: "50%" }}>
+        <Typography style={{ fontSize: 30, marginBottom: 20 }}>
+          Instruction
+        </Typography>
+        <Typography>
+          - The input field can be use to input todo or search todo list.
+        </Typography>
+        <Typography>- Hover on the item to edit or delete.</Typography>
+        <Typography>
+          - The list is connected with firebase database. So you can share it
+          with your friend (no log in required).
+        </Typography>
+      </div>
+    </Box>
   );
 }
 

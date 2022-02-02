@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import TextField from "@mui/material/TextField";
-import "./App.css";
+
 import Typography from "@mui/material/Typography";
 import _, { filter } from "lodash";
 import Box from "@mui/material/Box";

@@ -118,7 +118,7 @@ function App() {
                     setShowRemove(index);
                   }}
                   onMouseLeave={() => {
-                    setShowRemove(index);
+                    setShowRemove(-1);
                   }}
                 >
                   <Typography>{item}</Typography>
@@ -168,7 +168,7 @@ function App() {
                     setShowRemove(index);
                   }}
                   onMouseLeave={() => {
-                    setShowRemove(index);
+                    setShowRemove(-1);
                   }}
                 >
                   <Typography>{item}</Typography>
